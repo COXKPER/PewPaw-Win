@@ -16,12 +16,13 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v5
       with:
-        go-version: '1.25.0'
+        go-version: '1.25.x'
 
     - name: Setup MSYS2
       uses: msys2/setup-msys2@v2
       with:
         update: true
+        path-type: inherit
         install: >-
           mingw-w64-x86_64-toolchain
 
@@ -43,5 +44,5 @@ jobs:
         cd frontend
         mkdir build
         cd build
-        cmake .. -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+        cmake .. -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release
         cmake --build . --config Release
