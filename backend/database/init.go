@@ -9,8 +9,16 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+var DataDir = "/var/lib/pewpaw"
+
+func init() {
+	configDir, err := os.UserConfigDir()
+	if err == nil {
+		DataDir = filepath.Join(configDir, "pewpaw")
+	}
+}
+
 const (
-	DataDir         = "/var/lib/pewpaw"
 	KatanaDB        = "katana.db"
 	UserstoreDB     = "userstore.db"
 	MsgstoreDB      = "msgstore.db"

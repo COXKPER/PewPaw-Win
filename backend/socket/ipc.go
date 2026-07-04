@@ -5,11 +5,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
-	"os"
 	"sync"
 )
 
-const SocketPath = "/var/run/pewpaw-listener.sock"
+const ListenAddr = "127.0.0.1:49152"
 
 type Command struct {
 	ID      string          `json:"id"`
@@ -45,19 +44,10 @@ func (l *Listener) Handle(cmdType string, handler Handler) {
 }
 
 func (l *Listener) Start() error {
-	os.Remove(SocketPath)
-
-	addr, err := net.ResolveUnixAddr("unix", SocketPath)
-	if err != nil {
-		return fmt.Errorf("resolve addr: %w", err)
-	}
-
-	l.listener, err = net.ListenUnix("unix", addr)
+	var err error
+	l.listener, err = net.Listen("tcp", ListenAddr)
 	if err != nil {
 		return fmt.Errorf("listen: %w", err)
-	}
-	if err := os.Chmod(SocketPath, 0777); err != nil {
-		return fmt.Errorf("chmod socket: %w", err)
 	}
 
 	go l.acceptLoop()

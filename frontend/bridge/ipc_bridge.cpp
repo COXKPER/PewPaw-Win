@@ -4,30 +4,30 @@
 
 IpcBridge::IpcBridge(QObject *parent)
     : QObject(parent)
-    , m_socket(new QLocalSocket(this))
+    , m_socket(new QTcpSocket(this))
 {
-    connect(m_socket, &QLocalSocket::connected, this, &IpcBridge::onConnected);
-    connect(m_socket, &QLocalSocket::disconnected, this, &IpcBridge::onDisconnected);
-    connect(m_socket, &QLocalSocket::readyRead, this, &IpcBridge::onReadyRead);
-    connect(m_socket, &QLocalSocket::errorOccurred, this, &IpcBridge::onError);
+    connect(m_socket, &QTcpSocket::connected, this, &IpcBridge::onConnected);
+    connect(m_socket, &QTcpSocket::disconnected, this, &IpcBridge::onDisconnected);
+    connect(m_socket, &QTcpSocket::readyRead, this, &IpcBridge::onReadyRead);
+    connect(m_socket, &QTcpSocket::errorOccurred, this, &IpcBridge::onError);
 }
 
 IpcBridge::~IpcBridge()
 {
-    if (m_socket->state() != QLocalSocket::UnconnectedState)
-        m_socket->disconnectFromServer();
+    if (m_socket->state() != QTcpSocket::UnconnectedState)
+        m_socket->disconnectFromHost();
 }
 
 void IpcBridge::connectToBackend()
 {
-    if (m_socket->state() == QLocalSocket::ConnectedState)
+    if (m_socket->state() == QTcpSocket::ConnectedState)
         return;
-    m_socket->connectToServer(SOCKET_PATH);
+    m_socket->connectToHost(LISTEN_ADDR, LISTEN_PORT);
 }
 
 bool IpcBridge::isConnected() const
 {
-    return m_socket->state() == QLocalSocket::ConnectedState;
+    return m_socket->state() == QTcpSocket::ConnectedState;
 }
 
 void IpcBridge::sendCommand(const QString &type, const QJsonObject &payload)
@@ -65,7 +65,7 @@ void IpcBridge::onReadyRead()
     }
 }
 
-void IpcBridge::onError(QLocalSocket::LocalSocketError error)
+void IpcBridge::onError(QTcpSocket::SocketError error)
 {
     Q_UNUSED(error)
     qWarning() << "[IpcBridge] Socket error:" << m_socket->errorString();

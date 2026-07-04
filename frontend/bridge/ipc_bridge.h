@@ -2,11 +2,12 @@
 #define PEWPAW_IPC_BRIDGE_H
 
 #include <QObject>
-#include <QLocalSocket>
+#include <QTcpSocket>
 #include <QJsonObject>
 #include <QJsonDocument>
 
-#define SOCKET_PATH "/var/run/pewpaw-listener.sock"
+#define LISTEN_ADDR "127.0.0.1"
+#define LISTEN_PORT 49152
 
 class IpcBridge : public QObject
 {
@@ -29,11 +30,11 @@ private slots:
     void onConnected();
     void onDisconnected();
     void onReadyRead();
-    void onError(QLocalSocket::LocalSocketError error);
+    void onError(QTcpSocket::SocketError error);
 
 private:
     void processLine(const QByteArray &line);
-    QLocalSocket *m_socket;
+    QTcpSocket *m_socket;
     QByteArray m_buffer;
 };
 
