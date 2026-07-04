@@ -45,7 +45,7 @@ func main() {
 	}
 	defer ipc.Stop()
 
-	log.Printf("Listening on %s", socket.SocketPath)
+	log.Printf("Listening on %s", socket.ListenAddr)
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
