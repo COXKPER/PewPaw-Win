@@ -36,13 +36,13 @@ jobs:
       uses: jurplel/install-qt-action@v3
       with:
         version: '6.5.3'
-        arch: 'win64_mingw'
+        arch: 'win64_msvc2019_64'
+        modules: 'qtwebengine qtwebchannel qtwebsockets'
 
     - name: Build Frontend
-      shell: msys2 {0}
       run: |
         cd frontend
         mkdir build
         cd build
-        cmake .. -G "MSYS Makefiles" -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCMAKE_BUILD_TYPE=Release
         cmake --build . --config Release
